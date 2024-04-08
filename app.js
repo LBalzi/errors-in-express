@@ -36,13 +36,13 @@ app.use((req, res, next) => {
     - Set the response status to 404
     - Render the 'not-found' view
   */ 
+    res.status(404).render('not-found');
 });
 
 /* Global error handler */
 app.use((err, req, res, next) => {
-
   if (err) {
-    console.log('Global error handler called', err);
+    console.log('global error called', err)
   }
 
   /* TODO 2: Handle errors caught by your route handlers
@@ -56,6 +56,13 @@ app.use((err, req, res, next) => {
           set it to 500 by default if no error status is set
         * Render the 'error' view, passing it the error object
   */
+
+  if (err.status === 404) {
+    res.status(404).render('not-found', { err });
+  } else {
+    err.message = err.message || 'oops looks like something went wrong';
+    res.status(err.status || 500).render('error', { err });
+  }
 });
 
 module.exports = app;
